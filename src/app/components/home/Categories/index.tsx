@@ -13,7 +13,7 @@ export default function Categories({
   return (
     <section
       id="categories"
-      className="py-20 md:py-28"
+      className="py-20 md:py-28 bg-vanilla"
       data-testid="category-showcase"
     >
       <div className="max-w-[1320px] mx-auto px-6 md:px-10">
@@ -36,7 +36,7 @@ export default function Categories({
           {CATEGORIES.map((cat, i) => (
             <motion.button
               key={cat.filter}
-              data-testid={`category-${cat.filter.toLowerCase()}`}
+              data-testid={`category-${cat.filter.toLowerCase().replace(/\s+/g, "-")}`}
               initial={{ opacity: 0, y: 36 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}

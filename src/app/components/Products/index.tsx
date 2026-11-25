@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Star } from "lucide-react";
+import { Croissant, Plus, Star } from "lucide-react";
 import { toast } from "sonner";
-import { PRODUCTS, TAG_STYLES } from "@/app/data/bakery";
+import { PRODUCTS, TAG_STYLES, type Product } from "@/app/data/bakery";
 import { useCart } from "@/app/context/CartContext";
 import { MarginArtLeft, MarginArtRight } from "../decor/MarginArt";
 
@@ -19,13 +20,19 @@ function Stars() {
   );
 }
 
-function ProductCard({ product, index }: { product: any; index: number }) {
+function ProductCard({ product, index }: { product: Product; index: number }) {
   const { add } = useCart();
+  const [imgError, setImgError] = useState(false);
 
   const addToCart = () => {
     add(product.id);
     toast.success("Added to your bag", { description: product.name });
   };
+
+  const tagStyle =
+    TAG_STYLES[product.tag as keyof typeof TAG_STYLES] ||
+    "bg-coral text-vanilla";
+  const showImage = Boolean(product.img) && !imgError;
 
   return (
     <motion.article
@@ -36,42 +43,64 @@ function ProductCard({ product, index }: { product: any; index: number }) {
       className="group"
       data-testid={`product-card-${product.id}`}
     >
-      <div className="relative bg-peach/60 rounded-[1.75rem] aspect-square overflow-hidden">
+      <div className="relative bg-peach/60 rounded-[1.75rem] aspect-square overflow-hidden border border-cocoa/10">
         <span
-          className={`absolute top-4 left-4 z-[2] rounded-md px-2.5 py-1.5 text-[9px] font-bold tracking-[0.18em] ${TAG_STYLES[product.tag]}`}
+          className={`absolute top-4 left-4 z-10 rounded-md px-2.5 py-1.5 text-[9px] font-bold tracking-[0.18em] uppercase ${tagStyle}`}
         >
           {product.tag}
         </span>
-        <img
-          src={product.img}
-          alt={product.alt}
-          loading="lazy"
-          className="absolute inset-0 w-full h-full object-cover p-8 drop-shadow-[0_24px_24px_rgba(92,46,20,0.28)] transition-transform duration-700 ease-out group-hover:scale-[1.06] group-hover:-rotate-3"
-        />
+
+        {showImage ? (
+          <img
+            src={product.img}
+            alt={product.alt}
+            loading="lazy"
+            onError={() => setImgError(true)}
+            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06]"
+          />
+        ) : (
+          <div
+            className="w-full h-full flex flex-col items-center justify-center bg-[#F9E4D4] text-cocoa/45"
+            aria-hidden="true"
+          >
+            <Croissant size={32} strokeWidth={1.4} />
+          </div>
+        )}
+
         <button
           data-testid={`product-add-${product.id}`}
           onClick={addToCart}
-          className="absolute bottom-5 left-1/2 -translate-x-1/2 translate-y-16 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 focus-visible:translate-y-0 focus-visible:opacity-100 transition-all duration-400 bg-vanilla/95 text-cocoa rounded-full px-5 py-2.5 text-[10px] font-bold tracking-[0.18em] shadow-lg hover:bg-coral hover:text-vanilla"
+          className="absolute bottom-5 left-1/2 -translate-x-1/2 translate-y-16 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 focus-visible:translate-y-0 focus-visible:opacity-100 transition-all duration-300 bg-vanilla/95 text-cocoa rounded-full px-5 py-2.5 text-[10px] font-bold tracking-[0.18em] shadow-lg hover:bg-coral hover:text-vanilla z-10"
         >
           + ADD TO CART
         </button>
+
         <button
           data-testid={`product-add-touch-${product.id}`}
           onClick={addToCart}
           aria-label={`Add ${product.name} to cart`}
-          className="lg:hidden absolute bottom-4 right-4 w-9 h-9 rounded-full bg-cocoa text-vanilla flex items-center justify-center shadow-lg"
+          className="lg:hidden absolute bottom-4 right-4 w-9 h-9 rounded-full bg-cocoa text-vanilla flex items-center justify-center shadow-lg z-10 hover:bg-coral transition-colors"
         >
           <Plus size={15} />
         </button>
       </div>
+
       <div className="mt-4 text-center">
         <Stars />
         <h3 className="mt-2 text-[13px] font-bold tracking-[0.14em] uppercase text-cocoa">
           {product.name}
         </h3>
-        <p className="mt-1 font-sans font-bold text-base text-coral">
-          ৳{product.price}
-        </p>
+        <div className="mt-1 flex items-center justify-center gap-2">
+          {"originalPrice" in product &&
+            Boolean((product as any).originalPrice) && (
+              <span className="font-sans text-sm text-cocoa/45 line-through">
+                ৳{(product as any).originalPrice}
+              </span>
+            )}
+          <span className="font-sans font-bold text-base text-coral">
+            ৳{product.price}
+          </span>
+        </div>
       </div>
     </motion.article>
   );

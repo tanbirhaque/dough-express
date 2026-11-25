@@ -9,9 +9,40 @@ import {
   useMemo,
   useState,
 } from "react";
-import { PRODUCTS, ZONES } from "@/app/data/bakery";
+import { MENU, PRODUCTS, ZONES } from "@/app/data/bakery";
+
+export interface CartProduct {
+  id: string;
+  name: string;
+  price: number;
+  img: string;
+  alt: string;
+}
 
 export type Product = (typeof PRODUCTS)[number];
+
+function resolveProduct(id: string): CartProduct | undefined {
+  const prod = PRODUCTS.find((p) => p.id === id);
+  if (prod) return prod;
+
+  const [menuId, variantSlug] = id.split("--");
+  const menuItem = MENU.find((m) => m.id === menuId);
+  if (!menuItem) return undefined;
+
+  const variant = variantSlug
+    ? menuItem.variants?.find(
+        (v) => v.label.toLowerCase().replace(/\s+/g, "-") === variantSlug,
+      )
+    : undefined;
+
+  return {
+    id,
+    name: variant ? `${menuItem.name} (${variant.label})` : menuItem.name,
+    price: variant ? variant.price : menuItem.price,
+    img: menuItem.image ?? "",
+    alt: menuItem.name,
+  };
+}
 
 export interface CartItem {
   id: string;
@@ -19,7 +50,7 @@ export interface CartItem {
 }
 
 export interface DetailedCartItem extends CartItem {
-  product?: Product;
+  product?: CartProduct;
 }
 
 export interface CartContextType {
@@ -96,7 +127,7 @@ export function CartProvider({ children }: CartProviderProps) {
     () =>
       items.map((i) => ({
         ...i,
-        product: PRODUCTS.find((p) => p.id === i.id),
+        product: resolveProduct(i.id),
       })),
     [items],
   );

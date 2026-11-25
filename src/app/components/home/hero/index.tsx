@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Bike, Wheat } from "lucide-react";
+import { ArrowRight, Bike, Croissant, Wheat } from "lucide-react";
 import { scrollToId } from "@/app/lib/lenis";
 import { IMAGES } from "@/app/data/bakery";
 
@@ -47,24 +47,34 @@ function Stamp() {
 const FEATURES = [
   {
     icon: Bike,
-    label: "EXPRESS DELIVERY",
-    desc: "Warm to your door in 60 mins",
+    label: "60-MIN DHAKA EXPRESS",
+    desc: "Delivered fresh & warm to your doorstep across Dhaka",
   },
   {
     icon: Wheat,
-    label: "SMALL-BATCH CRAFT",
-    desc: "100% real Belgian chocolate & butter",
+    label: "SMALL-BATCH ARTISANAL",
+    desc: "Filled bomboloni, bento cheesecakes & Belgian ganache tubs",
   },
 ];
 
-export default function Hero() {
+interface HeroProps {
+  onFilter?: (filter: string) => void;
+}
+
+export default function Hero({ onFilter }: HeroProps) {
   const ref = useRef(null);
+  const [imgError, setImgError] = useState(false);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
   const imgY = useTransform(scrollYProgress, [0, 1], [0, 70]);
   const stampY = useTransform(scrollYProgress, [0, 1], [0, -50]);
+
+  const viewNovemberOffers = () => {
+    onFilter?.("NOVEMBER OFFER");
+    scrollToId("#menu");
+  };
 
   return (
     <section
@@ -104,7 +114,7 @@ export default function Hero() {
         </span>
       </motion.div>
 
-      <div className="max-w-[1320px] mx-auto px-6 md:px-10 pt-36 md:pt-44 pb-28 md:pb-44 grid lg:grid-cols-[1.05fr_0.95fr] gap-14 lg:gap-10 items-center">
+      <div className="max-w-[1320px] mx-auto px-6 md:px-10 pt-36 md:pt-44 pb-24 md:pb-36 lg:pb-60 grid lg:grid-cols-[1.05fr_0.95fr] gap-14 lg:gap-10 items-center">
         {/* Left column */}
         <div className="relative z-[1]">
           <motion.span
@@ -113,11 +123,11 @@ export default function Hero() {
             transition={{ delay: 0.15, duration: 0.8, ease: EASE }}
             className="inline-block font-script text-3xl md:text-4xl text-coral"
           >
-            Freshly Glazed
+            Freshly Glazed &amp; Loaded
           </motion.span>
 
           <h1 className="mt-3 font-display font-bold uppercase text-cocoa leading-[0.94] tracking-[0.01em] text-[clamp(3rem,8.2vw,6.8rem)]">
-            {["ARTISANAL", "DONUTS"].map((word, i) => (
+            {["DONUTS,", "TUB CAKES"].map((word, i) => (
               <span key={word} className="block overflow-hidden pb-1 -mb-1">
                 <motion.span
                   className="block"
@@ -143,7 +153,7 @@ export default function Hero() {
                 <span className="font-script text-coral normal-case tracking-normal text-[0.82em] align-baseline mr-3 md:mr-4">
                   &amp;
                 </span>
-                BAKES
+                BROWNIES
               </motion.span>
             </span>
           </h1>
@@ -187,17 +197,27 @@ export default function Hero() {
         >
           <motion.div
             style={{ y: imgY }}
-            className="relative overflow-hidden rounded-t-[220px] md:rounded-t-[300px] rounded-b-[2rem] border-[5px] md:border-[6px] border-vanilla shadow-[0_50px_90px_-40px_rgba(92,46,20,0.45)]"
+            className="relative overflow-hidden rounded-t-[220px] md:rounded-t-[300px] rounded-b-[2rem] border-[5px] md:border-[6px] border-vanilla bg-[#F9E4D4] shadow-[0_50px_90px_-40px_rgba(92,46,20,0.45)]"
             data-testid="hero-image-frame"
           >
-            <motion.img
-              initial={{ scale: 1.18 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.45, duration: 1.7, ease: EASE }}
-              src={IMAGES.hero}
-              alt="Stacked glazed donuts and chocolate brownies"
-              className="w-full h-[420px] md:h-[560px] object-cover"
-            />
+            {!imgError ? (
+              <motion.img
+                initial={{ scale: 1.18 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.45, duration: 1.7, ease: EASE }}
+                src={IMAGES.hero}
+                alt="Donut King Chocolate Overload topped with rich dark ganache"
+                onError={() => setImgError(true)}
+                className="w-full h-[420px] md:h-[560px] object-cover object-center"
+              />
+            ) : (
+              <div
+                className="w-full h-[420px] md:h-[560px] flex flex-col items-center justify-center bg-[#F9E4D4] text-cocoa/45"
+                aria-hidden="true"
+              >
+                <Croissant size={52} strokeWidth={1.3} />
+              </div>
+            )}
           </motion.div>
 
           <motion.div
@@ -211,42 +231,59 @@ export default function Hero() {
               <span className="w-3.5 h-3.5 rounded-full border-2 border-cocoa/70" />
             </span>
             <span className="font-script text-2xl text-cocoa leading-none">
-              baked at dawn
+              baked fresh daily • ৳120+
             </span>
           </motion.div>
         </motion.div>
       </div>
 
       {/* CTA pill */}
-      <div className="hidden lg:block absolute bottom-28 left-1/2 -translate-x-1/2 z-[2]">
+      <div className="hidden lg:flex flex-col items-center gap-3 absolute bottom-20 left-1/2 -translate-x-1/2 z-[2]">
         <motion.button
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.6, duration: 0.8, ease: EASE }}
-          onClick={() => scrollToId("#popular")}
+          onClick={() => scrollToId("#menu")}
           data-testid="hero-cta"
           className="group flex items-center gap-3 bg-cocoa text-vanilla rounded-full pl-9 pr-8 py-4 text-[11px] font-bold tracking-[0.26em] hover:bg-coral transition-colors duration-300"
         >
-          EXPLORE TODAY&apos;S BATCH
+          EXPLORE TODAY&apos;S MENU
           <ArrowRight
             size={15}
             className="transition-transform duration-300 group-hover:translate-x-1.5"
           />
         </motion.button>
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.8, duration: 0.6 }}
+          onClick={viewNovemberOffers}
+          data-testid="hero-november-offers"
+          className="text-[11px] font-semibold tracking-[0.2em] uppercase text-cocoa/75 hover:text-coral transition-colors"
+        >
+          View November Offers →
+        </motion.button>
       </div>
-      <div className="lg:hidden px-6 pb-24 -mt-10 relative z-[2]">
+      <div className="lg:hidden px-6 pb-28 mt-2 relative z-[2] flex flex-col items-center gap-3">
         <motion.button
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 1.2, duration: 0.8, ease: EASE }}
-          onClick={() => scrollToId("#popular")}
+          onClick={() => scrollToId("#menu")}
           data-testid="hero-cta-mobile"
           className="w-full flex items-center justify-center gap-3 bg-cocoa text-vanilla rounded-full py-4 text-[11px] font-bold tracking-[0.26em]"
         >
-          EXPLORE TODAY&apos;S BATCH
+          EXPLORE TODAY&apos;S MENU
           <ArrowRight size={15} />
         </motion.button>
+        <button
+          onClick={viewNovemberOffers}
+          data-testid="hero-november-offers-mobile"
+          className="text-[11px] font-semibold tracking-[0.2em] uppercase text-cocoa/75 hover:text-coral transition-colors"
+        >
+          View November Offers →
+        </button>
       </div>
 
       {/* curved bottom edge into the vanilla canvas */}

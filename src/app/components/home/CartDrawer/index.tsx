@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Check,
+  Croissant,
   Loader2,
   Minus,
   Plus,
@@ -250,11 +251,20 @@ export default function CartDrawer() {
                         className="flex gap-4"
                         data-testid={`cart-item-${i.id}`}
                       >
-                        <img
-                          src={i.product?.img}
-                          alt={i.product?.alt}
-                          className="w-16 h-16 rounded-xl object-cover bg-peach/60"
-                        />
+                        {i.product?.img ? (
+                          <img
+                            src={i.product.img}
+                            alt={i.product.alt}
+                            className="w-16 h-16 rounded-xl object-cover bg-peach/60 shrink-0"
+                          />
+                        ) : (
+                          <div
+                            className="w-16 h-16 rounded-xl bg-[#F9E4D4] text-cocoa/45 flex items-center justify-center shrink-0"
+                            aria-hidden="true"
+                          >
+                            <Croissant size={20} strokeWidth={1.4} />
+                          </div>
+                        )}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
                             <h4 className="text-[12px] font-bold tracking-[0.1em] uppercase text-cocoa leading-snug">

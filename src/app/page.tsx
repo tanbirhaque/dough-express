@@ -15,8 +15,8 @@ import Footer from "./components/home/Footer";
 export default function Home() {
   const [menuFilter, setMenuFilter] = useState("ALL");
   return (
-    <>
-      <Hero />
+    <main className="bg-vanilla">
+      <Hero onFilter={setMenuFilter} />
       <Marquee />
       <Products />
       <QuoteBanner />
@@ -26,6 +26,6 @@ export default function Home() {
       <ExpressZones />
       <Footer />
       <CartDrawer />
-    </>
+    </main>
   );
 }

@@ -22,7 +22,7 @@ const LEFT_LINKS: NavLink[] = [
   { label: "EXPRESS ZONES", id: "#zones" },
 ];
 const RIGHT_LINKS: NavLink[] = [
-  { label: "OUR STORY", id: "#story" },
+  { label: "BEST SELLER", id: "#story" },
   { label: "CONTACT", id: "#contact" },
 ];
 
