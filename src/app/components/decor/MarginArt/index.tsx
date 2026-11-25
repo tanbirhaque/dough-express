@@ -9,7 +9,7 @@ const artProps = {
   strokeWidth: "1.5",
   strokeLinecap: "round",
   strokeLinejoin: "round",
-};
+} as const;
 
 export function DonutArt({ className }: { className: string }) {
   return (

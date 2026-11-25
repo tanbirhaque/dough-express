@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Croissant, Plus, Star } from "lucide-react";
 import { toast } from "sonner";
@@ -24,7 +25,9 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
   const { add } = useCart();
   const [imgError, setImgError] = useState(false);
 
-  const addToCart = () => {
+  const addToCart = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     add(product.id);
     toast.success("Added to your bag", { description: product.name });
   };
@@ -50,22 +53,28 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
           {product.tag}
         </span>
 
-        {showImage ? (
-          <img
-            src={product.img}
-            alt={product.alt}
-            loading="lazy"
-            onError={() => setImgError(true)}
-            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06]"
-          />
-        ) : (
-          <div
-            className="w-full h-full flex flex-col items-center justify-center bg-[#F9E4D4] text-cocoa/45"
-            aria-hidden="true"
-          >
-            <Croissant size={32} strokeWidth={1.4} />
-          </div>
-        )}
+        <Link
+          href={`/product/${product.id}`}
+          aria-label={`View ${product.name}`}
+          className="block w-full h-full"
+        >
+          {showImage ? (
+            <img
+              src={product.img}
+              alt={product.alt}
+              loading="lazy"
+              onError={() => setImgError(true)}
+              className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06]"
+            />
+          ) : (
+            <div
+              className="w-full h-full flex flex-col items-center justify-center bg-[#F9E4D4] text-cocoa/45"
+              aria-hidden="true"
+            >
+              <Croissant size={32} strokeWidth={1.4} />
+            </div>
+          )}
+        </Link>
 
         <button
           data-testid={`product-add-${product.id}`}
@@ -87,9 +96,12 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
 
       <div className="mt-4 text-center">
         <Stars />
-        <h3 className="mt-2 text-[13px] font-bold tracking-[0.14em] uppercase text-cocoa">
+        <Link
+          href={`/product/${product.id}`}
+          className="mt-2 block text-[13px] font-bold tracking-[0.14em] uppercase text-cocoa hover:text-coral transition-colors"
+        >
           {product.name}
-        </h3>
+        </Link>
         <div className="mt-1 flex items-center justify-center gap-2">
           {"originalPrice" in product &&
             Boolean((product as any).originalPrice) && (

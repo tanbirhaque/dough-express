@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, ShoppingBag, X } from "lucide-react";
 // import Logo from "@/components/Logo";
@@ -60,9 +62,15 @@ function BagButton() {
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
   const go = (id: string) => {
     setMobileOpen(false);
+    if (pathname !== "/" && !document.querySelector(id)) {
+      router.push(id === "#home" ? "/" : `/${id}`);
+      return;
+    }
     scrollToId(id);
   };
 
@@ -97,8 +105,8 @@ export default function Navbar() {
         </button>
 
         <div className="justify-self-center">
-          <a
-            href="#top"
+          <Link
+            href="/"
             className="flex items-center font-caveat text-2xl sm:text-4xl font-bold tracking-tight text-[#5C2E14] whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F27B58] rounded-lg"
             aria-label="Dough Express Home"
           >
@@ -150,7 +158,7 @@ export default function Navbar() {
                             strokeWidth={2.3}
                             aria-hidden="true"
                         /> */}
-          </a>
+          </Link>
           {/* <Logo /> */}
         </div>
 

@@ -25,19 +25,24 @@ function resolveProduct(id: string): CartProduct | undefined {
   const prod = PRODUCTS.find((p) => p.id === id);
   if (prod) return prod;
 
-  const [menuId, variantSlug] = id.split("--");
+  const [menuId, ...slugs] = id.split("--");
   const menuItem = MENU.find((m) => m.id === menuId);
   if (!menuItem) return undefined;
 
-  const variant = variantSlug
-    ? menuItem.variants?.find(
-        (v) => v.label.toLowerCase().replace(/\s+/g, "-") === variantSlug,
-      )
-    : undefined;
+  const variant = menuItem.variants?.find((v) =>
+    slugs.includes(v.label.toLowerCase().replace(/\s+/g, "-")),
+  );
+  const flavor = menuItem.flavors?.find((f) =>
+    slugs.includes(f.toLowerCase().replace(/\s+/g, "-")),
+  );
+
+  const suffixes = [variant?.label, flavor].filter(Boolean);
 
   return {
     id,
-    name: variant ? `${menuItem.name} (${variant.label})` : menuItem.name,
+    name: suffixes.length
+      ? `${menuItem.name} (${suffixes.join(" · ")})`
+      : menuItem.name,
     price: variant ? variant.price : menuItem.price,
     img: menuItem.image ?? "",
     alt: menuItem.name,

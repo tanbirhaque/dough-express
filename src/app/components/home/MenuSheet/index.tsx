@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Croissant, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -52,7 +53,11 @@ function MenuCard({
   return (
     <div className="group flex items-start gap-4">
       {/* ── Product Thumbnail ── */}
-      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 border border-cocoa/15 bg-peach/40 flex items-center justify-center">
+      <Link
+        href={`/product/${item.id}`}
+        aria-label={`View ${item.name}`}
+        className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 border border-cocoa/15 bg-peach/40 flex items-center justify-center"
+      >
         {showImage ? (
           <img
             src={item.image}
@@ -69,15 +74,18 @@ function MenuCard({
             <Croissant size={24} strokeWidth={1.4} />
           </div>
         )}
-      </div>
+      </Link>
 
       {/* ── Item Details ── */}
       <div className="flex-1 min-w-0">
         {/* Name row with badge / minOrderNote */}
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <h4 className="font-display font-semibold uppercase text-lg md:text-xl tracking-[0.04em] text-cocoa leading-tight">
+          <Link
+            href={`/product/${item.id}`}
+            className="font-display font-semibold uppercase text-lg md:text-xl tracking-[0.04em] text-cocoa hover:text-coral transition-colors leading-tight"
+          >
             {item.name}
-          </h4>
+          </Link>
           {item.badge && (
             <span className="inline-flex shrink-0 rounded-full bg-coral/15 px-2.5 py-0.5 text-[9px] font-bold tracking-[0.14em] text-coral uppercase">
               {item.badge}
@@ -121,7 +129,8 @@ function MenuCard({
           </span>
           <button
             data-testid={`menu-add-${item.id}`}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               addToCart(cartId);
               toast.success("Added to your bag", { description: toastDesc });
             }}
