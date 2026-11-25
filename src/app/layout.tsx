@@ -1,15 +1,37 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Plus_Jakarta_Sans,
+  Cormorant_Garamond,
+  Sacramento,
+  Caveat_Brush,
+} from "next/font/google";
 import "./globals.css";
+import Navbar from "./components/Navbar";
+import { CartProvider } from "./context/CartContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-jakarta",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-cormorant",
+});
+
+const sacramento = Sacramento({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-sacramento",
+});
+
+const caveat = Caveat_Brush({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-caveat",
 });
 
 export const metadata: Metadata = {
@@ -21,9 +43,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${jakarta.variable} ${cormorant.variable} ${sacramento.variable} ${caveat.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <head>
+        <link
+          rel="icon"
+          href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%235C2E14'/%3E%3Ccircle cx='32' cy='32' r='25' fill='%23F59CB0'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%235C2E14'/%3E%3Ccircle cx='22' cy='19' r='2.4' fill='%23F7C668'/%3E%3Ccircle cx='42' cy='21' r='2.4' fill='%23F27B58'/%3E%3Ccircle cx='45' cy='41' r='2.4' fill='%23F7C668'/%3E%3Ccircle cx='20' cy='43' r='2.4' fill='%23FFF9F5'/%3E%3C/svg%3E"
+        />
+      </head>
+      <body className="min-h-full flex flex-col">
+        <CartProvider>
+          <Navbar />
+          {children}
+        </CartProvider>
+      </body>
     </html>
   );
 }
